@@ -442,6 +442,776 @@ document.getElementById('whatsapp-lead-form').addEventListener('submit', functio
   }
 </style>
 
+
+<img alt="Chatbot" id="chatbot-icon" src="https://cdn-icons-png.flaticon.com/512/4712/4712103.png"/>
+<div id="chat-container">
+  <div style="text-align: right;">
+    <button onclick="chatContainer.style.display='none'; chatVisible = false;" style="border:none;background:none;font-size:18px;cursor:pointer;">✖</button>
+  </div>
+  <div class="message bot">👋 Hi! Welcome to EFG (EduFinFlex Growth). Let’s help you with your education finance needs.</div>
+  <div class="message bot">🧑 May I have your name please?</div>
+  <input id="name" onchange="nextStep(1)" placeholder="Your Name" type="text"/>
+  <div id="step1" style="display:none;">
+    <div class="message bot">📱 Your mobile number?</div>
+    <input id="contact" onchange="nextStep(2)" placeholder="Mobile" type="text"/>
+  </div>
+  <div id="step2" style="display:none;">
+    <div class="message bot">📌 What do you need help with?</div>
+    <select id="requirement" onchange="nextStep(3); submitLeadData();">
+      <option value="">Select</option>
+      <option>School Fee Financing</option>
+      <option>College/Professional Course Financing</option>
+      <option>EMI Calculator Info</option>
+      <option>Eligibility Details</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div id="step3" style="display:none;">
+    <div class="message bot">✅ Thank you! Our team will contact you shortly via WhatsApp.</div>
+    <div class="message bot">You can also explore common questions below 👇</div>
+    <div class="faq-group">
+      <strong>FAQs about Fee Financing:</strong><br/>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q1"/> What is school fee financing?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q2"/> Who is eligible?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q3"/> What documents are needed?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q4"/> Do you offer interest-free EMIs?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q5"/> How is EMI calculated?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q6"/> How long does approval take?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q7"/> Can I prepay my EMI?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q8"/> Is my data secure?</label>
+    </div>
+    <div class="message bot" id="faq-answer"></div>
+  </div>
+</div>
+<style>
+#chatbot-icon {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  width: 60px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  z-index: 999;
+}
+#chatbot-icon:hover {
+  transform: scale(1.1);
+}
+#chat-container {
+  max-height: 80vh;
+  overflow-y: auto;
+  position: fixed;
+  bottom: 150px;
+  left: 20px;
+  width: 320px;
+  max-width: 95vw;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #aaa;
+  padding: 10px;
+  display: none;
+  z-index: 9999;
+}
+.message { margin: 5px 0; }
+.bot {
+  background: #e6f0ff;
+  padding: 8px;
+  border-radius: 6px;
+}
+input, select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
+.faq-group {
+  margin-top: 15px;
+}
+.faq-group label {
+  display: block;
+  padding: 5px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin: 3px 0;
+  cursor: pointer;
+}
+</style>
+<script>
+let chatVisible = false;
+const chatIcon = document.getElementById("chatbot-icon");
+const chatContainer = document.getElementById("chat-container");
+chatIcon.onclick = () => {
+  chatVisible = !chatVisible;
+  chatContainer.style.display = chatVisible ? "block" : "none";
+};
+
+function nextStep(step) {
+  document.getElementById("step" + step).style.display = "block";
+}
+
+function submitLeadData() {
+  const name = document.getElementById("name").value;
+  const mobile = document.getElementById("contact").value;
+  const company = "EFG Chatbot";
+  const requirement = document.getElementById("requirement").value;
+  fetch("https://efg-chatbot-backend.onrender.com/send-whatsapp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, mobile, company, requirement })
+  })
+  .then(response => response.json())
+  .then(data => console.log("✅ Lead sent to WhatsApp:", data))
+  .catch(error => console.error("❌ Error sending to WhatsApp:", error));
+}
+
+function showFAQ(radio) {
+  const answers = {
+    Q1: "School fee financing lets you pay school or course fees in easy monthly EMIs instead of one-time lump sum.",
+    Q2: "Any parent or student with valid documents and regular income is eligible for financing.",
+    Q3: "You need basic KYC, income proof, and admission confirmation.",
+    Q4: "Some plans offer 0% interest EMIs in partnership with schools.",
+    Q5: "EMIs are calculated based on amount, interest rate, and tenure using reducing balance method.",
+    Q6: "Approval usually takes just a few minutes after verification.",
+    Q7: "Yes, you can prepay your EMI anytime with no extra charges.",
+    Q8: "Yes, we use bank-level encryption to protect all your data."
+  };
+  const answerDiv = document.createElement("div");
+  answerDiv.className = "message bot";
+  answerDiv.innerText = answers[radio.value];
+  radio.parentElement.after(answerDiv);
+}
+</script>
+
+</body>
+<script>
+  window.addEventListener('scroll', function() {
+    const aboutContent = document.querySelector('.about-content');
+    if (!aboutContent) return;
+
+    const position = aboutContent.getBoundingClientRect().top;
+    const screenPosition = window.innerHeight / 1.3;
+
+    if (position < screenPosition) {
+      aboutContent.classList.add('visible');
+    }
+  });
+</script>
+</html>
+<script>
+  const faqQuestions = document.querySelectorAll('.faq-question');
+
+  faqQuestions.forEach(question => {
+    question.addEventListener('click', () => {
+      question.classList.toggle('active');
+
+      const answer = question.nextElementSibling;
+      if (question.classList.contains('active')) {
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        answer.style.padding = '20px';
+      } else {
+        answer.style.maxHeight = 0;
+        answer.style.padding = '0 20px';
+      }
+    });
+  });
+</script>
+<script>
+  function calculateEMI() {
+    const amount = parseFloat(document.getElementById('amount').value);
+    const interest = parseFloat(document.getElementById('interest').value) / 100 / 12;
+    const tenure = parseInt(document.getElementById('tenure').value);
+
+    if (isNaN(amount) || isNaN(interest) || isNaN(tenure)) {
+      alert('Please enter valid numbers.');
+      return;
+    }
+
+    const emi = (amount * interest * Math.pow(1 + interest, tenure)) / (Math.pow(1 + interest, tenure) - 1);
+
+    document.getElementById('emi-result').innerHTML = `Your EMI is ₹ ${emi.toFixed(2)}`;
+  }
+</script>OCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFG EduFinFlex Growth</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="logo.png" alt="EFG Logo" class="logo"/>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About Us</a>
+      <a href="#services">Services</a>
+      <a href="#calculator">EMI Calculator</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact" >Contact Us</a>
+      <div class="login-dropdown">
+  <button class="login-btn">LOGIN</button>
+  <div class="login-options">
+    <a href="parent.html">Parent</a>
+    <a href="school.html">School</a>
+    <a href="admin.html">Admin</a>
+  </div>
+</div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="hero-text">
+      <h1>Make Education Affordable with Flexible EMI Options</h1>
+      <p>Pay school and professional course fees in easy monthly installments. No financial stress, just focus on learning.</p>
+
+      <button class="apply-btn" onclick="window.location.href='apply.html'">Apply Now</button>
+      
+      <button>Connect with us</button>
+    </div>
+    <div class="hero-form">
+  <form>
+    <select>
+      <option selected disabled>Select School/Course</option>
+      <option>DELHI PUBLIC SCHOOL</option>
+      <option>XAVIERS INTERNATIONAL</option>
+    </select>
+
+    <input type="number" placeholder="Enter Fee Amount">
+
+    <label for="duration">Preferred EMI Duration (months): <span id="durationValue">12</span></label>
+    <input type="range" id="duration" min="3" max="24" step="1" value="12">
+
+    <button type="submit">Check Eligibility</button>
+  </form>
+</div>
+  </section>
+
+  
+
+  <!-- About -->
+  <section class="about" id="about">
+  
+  <div class="about-content">
+    <img src="motive.png" alt="Our Motive">
+    <div class="about-text">
+        <h2>About Us</h2>
+      <p><strong>EFG (EduFinFlex Growth)</strong> is an innovative school fee financing company headquartered in Bangalore, India. Our mission is to make education affordable and stress-free by providing flexible EMI options for school and professional course fees.</p>
+      <p>We believe no student should be held back due to financial constraints. Our transparent, tech-enabled platform helps parents and students pay fees conveniently while focusing on education.</p>
+      <ul>
+        <li>✅ Transparent Process</li>
+        <li>✅ Flexible EMI Options</li>
+        <li>✅ Quick Approvals</li>
+        <li>✅ Student-Centric Approach</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section class="services" id="services">
+  <h2>Our Services</h2>
+  <div class="service-cards">
+    <div class="service-card">
+      <h3>School Fee Financing</h3>
+      <p class="short">Convert lump sum school fee payments into easy EMIs.</p>
+      <p class="more">Partnered with schools to split annual fees into stress-free monthly installments for parents.</p>
+    </div>
+    <div class="service-card">
+      <h3>Professional Course Financing</h3>
+      <p class="short">Upskill without upfront cost burden.</p>
+      <p class="more">Flexible financing for tuition, certifications, and training to boost your career easily.</p>
+    </div>
+    <div class="service-card">
+      <h3>Quick Approval Process</h3>
+      <p class="short">Instant eligibility & smooth processing.</p>
+      <p class="more">Smart platform checks your eligibility in real-time and handles payments on time.</p>
+    </div>
+  </div>
+</section>
+<section class="how-it-works" id="how-it-works">
+  <h2>How It Works</h2>
+  <div class="steps-row">
+    <div class="step-item">
+      <div class="step">1. Apply Online</div>
+      <img src="img1.png" alt="Step 1">
+    </div>
+    <div class="step-item">
+      <div class="step">2. Instant Eligibility</div>
+      <img src="img2.png" alt="Step 2">
+    </div>
+    <div class="step-item">
+      <div class="step">3. Documentation</div>
+      <img src="img3.png" alt="Step 3">
+    </div>
+    <div class="step-item">
+      <div class="step">4. Fee Payment</div>
+      <img src="img4.png" alt="Step 4">
+    </div>
+  </div>
+</section>
+  
+<section class="emi-section" id="calculator">
+  <!-- Left: Calculator -->
+  <div class="emi-left">
+    <div class="calculator-box">
+      <h2>EMI Calculator</h2>
+      <input type="number" id="amount" placeholder="Fee Amount">
+      <input type="number" id="interest" placeholder="Interest Rate (%)">
+      <input type="number" id="tenure" placeholder="Tenure (Months)">
+      <button onclick="calculateEMI()">Calculate EMI</button>
+      <div id="emi-result"></div>
+    </div>
+  </div>
+
+  <!-- Right: Image -->
+  <div class="emi-right">
+    <img src="desk1.png" alt="Desk1">
+  </div>
+</section>
+
+  <section class="testimonial-section">
+  <h2 class="testimonial-heading">What Our Customers Say</h2>
+
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+      <!-- Slide 1 -->
+      <div class="swiper-slide testimonial-card">
+        <img src="p1.jpg" alt="Parent 1">
+        <h3>Parent 1</h3>
+        <p>This company has made my life so much easier. Highly recommended!</p>
+      </div>
+      <!-- Slide 2 -->
+      <div class="swiper-slide testimonial-card">
+        <img src="p2.jpg" alt="Parent 2">
+        <h3>Parent 2</h3>
+        <p>Flexible EMI options that suit every budget. Love the experience!</p>
+      </div>
+      <!-- Slide 3 -->
+      <div class="swiper-slide testimonial-card">
+        <img src="p3.jpg" alt="Parent 3">
+        <h3>Parent 3</h3>
+        <p>Excellent support and a transparent process. Thank you EFG!</p>
+      </div>
+      <!-- Slide 4 -->
+      <div class="swiper-slide testimonial-card">
+        <img src="p4.jpg" alt="Parent 4">
+        <h3>Parent 4</h3>
+        <p>Stress-free fee payments with quick approvals. So convenient!</p>
+      </div>
+      <!-- Slide 5 -->
+      <div class="swiper-slide testimonial-card">
+        <img src="p5.jpg" alt="Parent 5">
+        <h3>Parent 5</h3>
+        <p>Highly reliable and trustworthy service for school fee financing.</p>
+      </div>
+    </div>
+    <!-- Dots pagination -->
+    <div class="swiper-pagination"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  const swiper = new Swiper(".mySwiper", {
+    slidesPerView: 3,
+    spaceBetween: 40,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      0: {
+        slidesPerView: 1,
+      },
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+</script>
+  </div>
+</section>
+
+
+  <section class="faq-section"  id="faq">
+  <h2 class="faq-heading">Frequently Asked Questions</h2>
+  
+  <div class="faq-item">
+    <button class="faq-question">1. How does EFG's fee financing work?</button>
+    <div class="faq-answer">
+      <p>EFG pays your school fees upfront to the institution and you repay EFG in easy monthly EMIs.</p>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <button class="faq-question">2. What fees can be financed?</button>
+    <div class="faq-answer">
+      <p>School fees, college tuition, and professional course fees can be financed through EFG.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">3. What documents are needed to apply?</button>
+    <div class="faq-answer">
+      <p>Basic KYC documents, proof of income, and admission details are required.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">4. How long does approval take?</button>
+    <div class="faq-answer">
+      <p>Approvals are usually instant if you meet the eligibility criteria and provide required documents.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">5. Can I prepay my EMIs?</button>
+    <div class="faq-answer">
+      <p>Yes, you can prepay your EMIs anytime without any prepayment charges.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">6. Is my information secure with EFG?</button>
+    <div class="faq-answer">
+      <p>Absolutely! We use top-notch security protocols to protect your data.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">7. How are EMIs calculated?</button>
+    <div class="faq-answer">
+      <p>EMIs are calculated based on the fee amount, interest rate, and repayment tenure.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">8. What happens if I miss an EMI payment?</button>
+    <div class="faq-answer">
+      <p>A late payment fee may be charged. We recommend timely payments to maintain a good credit score.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">9. Is EFG affiliated with schools?</button>
+    <div class="faq-answer">
+      <p>We partner with schools and institutions to offer flexible financing but work independently to manage repayments.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">10. How can I contact EFG for support?</button>
+    <div class="faq-answer">
+      <p>You can reach us via our contact page, email, or toll-free support number anytime!</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-page" id="contact">
+  <!-- Main page heading -->
+  <h2 class="main-heading">Contact Us</h2>
+
+  <div class="contact-wrapper">
+    <!-- Left Side: Info -->
+    <div class="contact-info">
+      <h3>EFG EduFinFlex Growth</h3>
+      <p><strong>Address:</strong> 123 Education Street, Koramangala, Bangalore, Karnataka 560034</p>
+      <p><strong>Phone:</strong> +91 80 1234 5678</p>
+      <p><strong>Email:</strong> info@edfgfinance.com</p>
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8832488279373!2d77.62290141464313!3d12.935201419081566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae15b2e76b2783%3A0x3b32f8c2f42e09a2!2sKoramangala%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1627578273126!5m2!1sen!2sin"
+        width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy">
+      </iframe>
+    </div>
+
+    <!-- Right Side: Form -->
+    <div class="contact-form">
+      <h3>Get in Touch</h3>
+   <form action="mailto:deependrasingh756@gmail.com" method="POST" enctype="text/plain">
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <input type="text" placeholder="Subject" required>
+        <textarea placeholder="Your Message" rows="5" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+
+
+    </div>
+  </div>
+</section>
+
+
+
+ <footer class="footer">
+  <div class="footer-container">
+    <!-- Column 1 -->
+    <div class="footer-column">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="footer-column">
+      <h4>For Partners</h4>
+      <ul>
+        <li><a href="#">EFG for institutes</a></li>
+        <li><a href="#">Institute login</a></li>
+      </ul>
+
+      <h4>For Parents</h4>
+      <ul>
+        <li><a href="#">EFG for parents</a></li>
+        <li><a href="#">Parent login</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3 -->
+    <div class="footer-column">
+      <h4>Reach us at</h4>
+      <p><strong>Customer Support:</strong><br> +91 80 1234 5678</p>
+      <p><strong>Timings:</strong><br> 10:00 AM – 7:00 PM (Mon – Sat)</p>
+      <p><strong>Email:</strong><br> info@edfgfinance.com</p>
+    </div>
+
+    <!-- Column 4 -->
+    <div class="footer-column">
+      <h4>Registered Address</h4>
+      <p>
+        123 Education Street,<br>
+        Koramangala, Bangalore,<br>
+        Karnataka 560034
+      </p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2024 EFG EduFinFlex Growth</p>
+    <div class="footer-links">
+      <a href="#">Our Lending Partners</a>
+      <a href="#">Terms & Conditions</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Grievance Officer</a>
+    </div>
+  </div>
+</footer>
+<script>
+  const loginBtn = document.querySelector('.login-btn');
+  const loginOptions = document.querySelector('.login-options');
+
+  loginBtn.addEventListener('click', () => {
+    loginOptions.style.display = loginOptions.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Close dropdown if clicked outside
+  window.addEventListener('click', function(e) {
+    if (!loginBtn.contains(e.target) && !loginOptions.contains(e.target)) {
+      loginOptions.style.display = 'none';
+    }
+  });
+</script>
+  <section class="chat-form-section">
+  <h3>Talk to us via WhatsApp</h3>
+  <form id="whatsapp-lead-form">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="text" id="mobile" placeholder="Your Mobile" required>
+    <input type="text" id="company" placeholder="Your School or Company" required>
+    <input type="text" id="requirement" placeholder="Your Requirement" required>
+    <button type="submit">Send on WhatsApp</button>
+  </form>
+</section>
+
+<script>
+document.getElementById('whatsapp-lead-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  fetch('https://efg-chatbot.onrender.com/send-whatsapp', {  // Replace with your deployed backend URL
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: document.getElementById('name').value,
+      mobile: document.getElementById('mobile').value,
+      company: document.getElementById('company').value,
+      requirement: document.getElementById('requirement').value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'sent') {
+      alert('Message sent via WhatsApp ✅');
+    } else {
+      alert('Failed to send message ❌');
+    }
+  })
+  .catch(err => {
+    alert('Something went wrong!');
+  });
+});
+</script>
+<a href="https://wa.me/919079971805?text=Hi%20EFG!%20I%20want%20to%20know%20more." class="whatsapp-float" target="_blank">
+  <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" alt="Chat" style="width:60px;height:60px;">
+</a>
+<style>
+  .whatsapp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+  }
+</style>
+
+
+<img alt="Chatbot" id="chatbot-icon" src="https://cdn-icons-png.flaticon.com/512/4712/4712103.png"/>
+<div id="chat-container">
+  <div style="text-align: right;">
+    <button onclick="chatContainer.style.display='none'; chatVisible = false;" style="border:none;background:none;font-size:18px;cursor:pointer;">✖</button>
+  </div>
+  <div class="message bot">👋 Hi! Welcome to EFG (EduFinFlex Growth). Let’s help you with your education finance needs.</div>
+  <div class="message bot">🧑 May I have your name please?</div>
+  <input id="name" onchange="nextStep(1)" placeholder="Your Name" type="text"/>
+  <div id="step1" style="display:none;">
+    <div class="message bot">📱 Your mobile number?</div>
+    <input id="contact" onchange="nextStep(2)" placeholder="Mobile" type="text"/>
+  </div>
+  <div id="step2" style="display:none;">
+    <div class="message bot">📌 What do you need help with?</div>
+    <select id="requirement" onchange="nextStep(3); submitLeadData();">
+      <option value="">Select</option>
+      <option>School Fee Financing</option>
+      <option>College/Professional Course Financing</option>
+      <option>EMI Calculator Info</option>
+      <option>Eligibility Details</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div id="step3" style="display:none;">
+    <div class="message bot">✅ Thank you! Our team will contact you shortly via WhatsApp.</div>
+    <div class="message bot">You can also explore common questions below 👇</div>
+    <div class="faq-group">
+      <strong>FAQs about Fee Financing:</strong><br/>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q1"/> What is school fee financing?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q2"/> Who is eligible?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q3"/> What documents are needed?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q4"/> Do you offer interest-free EMIs?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q5"/> How is EMI calculated?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q6"/> How long does approval take?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q7"/> Can I prepay my EMI?</label>
+      <label><input name="faq" onchange="showFAQ(this)" type="radio" value="Q8"/> Is my data secure?</label>
+    </div>
+    <div class="message bot" id="faq-answer"></div>
+  </div>
+</div>
+<style>
+#chatbot-icon {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  width: 60px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  z-index: 999;
+}
+#chatbot-icon:hover {
+  transform: scale(1.1);
+}
+#chat-container {
+  max-height: 80vh;
+  overflow-y: auto;
+  position: fixed;
+  bottom: 150px;
+  left: 20px;
+  width: 320px;
+  max-width: 95vw;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #aaa;
+  padding: 10px;
+  display: none;
+  z-index: 9999;
+}
+.message { margin: 5px 0; }
+.bot {
+  background: #e6f0ff;
+  padding: 8px;
+  border-radius: 6px;
+}
+input, select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
+.faq-group {
+  margin-top: 15px;
+}
+.faq-group label {
+  display: block;
+  padding: 5px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin: 3px 0;
+  cursor: pointer;
+}
+</style>
+<script>
+let chatVisible = false;
+const chatIcon = document.getElementById("chatbot-icon");
+const chatContainer = document.getElementById("chat-container");
+chatIcon.onclick = () => {
+  chatVisible = !chatVisible;
+  chatContainer.style.display = chatVisible ? "block" : "none";
+};
+
+function nextStep(step) {
+  document.getElementById("step" + step).style.display = "block";
+}
+
+function submitLeadData() {
+  const name = document.getElementById("name").value;
+  const mobile = document.getElementById("contact").value;
+  const company = "EFG Chatbot";
+  const requirement = document.getElementById("requirement").value;
+  fetch("https://efg-chatbot-backend.onrender.com/send-whatsapp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, mobile, company, requirement })
+  })
+  .then(response => response.json())
+  .then(data => console.log("✅ Lead sent to WhatsApp:", data))
+  .catch(error => console.error("❌ Error sending to WhatsApp:", error));
+}
+
+function showFAQ(radio) {
+  const answers = {
+    Q1: "School fee financing lets you pay school or course fees in easy monthly EMIs instead of one-time lump sum.",
+    Q2: "Any parent or student with valid documents and regular income is eligible for financing.",
+    Q3: "You need basic KYC, income proof, and admission confirmation.",
+    Q4: "Some plans offer 0% interest EMIs in partnership with schools.",
+    Q5: "EMIs are calculated based on amount, interest rate, and tenure using reducing balance method.",
+    Q6: "Approval usually takes just a few minutes after verification.",
+    Q7: "Yes, you can prepay your EMI anytime with no extra charges.",
+    Q8: "Yes, we use bank-level encryption to protect all your data."
+  };
+  const answerDiv = document.createElement("div");
+  answerDiv.className = "message bot";
+  answerDiv.innerText = answers[radio.value];
+  radio.parentElement.after(answerDiv);
+}
+</script>
+
 </body>
 <script>
   window.addEventListener('scroll', function() {
