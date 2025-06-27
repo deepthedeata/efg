@@ -390,6 +390,47 @@
     }
   });
 </script>
+  <section class="chat-form-section">
+  <h3>Talk to us via WhatsApp</h3>
+  <form id="whatsapp-lead-form">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="text" id="mobile" placeholder="Your Mobile" required>
+    <input type="text" id="company" placeholder="Your School or Company" required>
+    <input type="text" id="requirement" placeholder="Your Requirement" required>
+    <button type="submit">Send on WhatsApp</button>
+  </form>
+</section>
+
+<script>
+document.getElementById('whatsapp-lead-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  fetch('https://efg-chatbot.onrender.com/send-whatsapp', {  // Replace with your deployed backend URL
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: document.getElementById('name').value,
+      mobile: document.getElementById('mobile').value,
+      company: document.getElementById('company').value,
+      requirement: document.getElementById('requirement').value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'sent') {
+      alert('Message sent via WhatsApp ✅');
+    } else {
+      alert('Failed to send message ❌');
+    }
+  })
+  .catch(err => {
+    alert('Something went wrong!');
+  });
+});
+</script>
+
 </body>
 <script>
   window.addEventListener('scroll', function() {
