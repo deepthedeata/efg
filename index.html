@@ -581,6 +581,60 @@ function showFAQ(radio) {
 }
 </script>
 
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  let chatVisible = false;
+  const chatIcon = document.getElementById("chatbot-icon");
+  const chatContainer = document.getElementById("chat-container");
+
+  chatIcon.onclick = () => {
+    chatVisible = !chatVisible;
+    chatContainer.style.display = chatVisible ? "block" : "none";
+  };
+
+  function nextStep(step) {
+    document.getElementById("step" + step).style.display = "block";
+  }
+
+  function submitLeadData() {
+    const name = document.getElementById("name").value;
+    const mobile = document.getElementById("contact").value;
+    const company = "EFG Chatbot";
+    const requirement = document.getElementById("requirement").value;
+    fetch("https://efg-chatbot-backend.onrender.com/send-whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, mobile, company, requirement })
+    })
+    .then(response => response.json())
+    .then(data => console.log("✅ Lead sent to WhatsApp:", data))
+    .catch(error => console.error("❌ Error sending to WhatsApp:", error));
+  }
+
+  function showFAQ(radio) {
+    const answers = {
+      Q1: "School fee financing lets you pay school or course fees in easy monthly EMIs instead of one-time lump sum.",
+      Q2: "Any parent or student with valid documents and regular income is eligible for financing.",
+      Q3: "You need basic KYC, income proof, and admission confirmation.",
+      Q4: "Some plans offer 0% interest EMIs in partnership with schools.",
+      Q5: "EMIs are calculated based on amount, interest rate, and tenure using reducing balance method.",
+      Q6: "Approval usually takes just a few minutes after verification.",
+      Q7: "Yes, you can prepay your EMI anytime with no extra charges.",
+      Q8: "Yes, we use bank-level encryption to protect all your data."
+    };
+    const answerDiv = document.createElement("div");
+    answerDiv.className = "message bot";
+    answerDiv.innerText = answers[radio.value];
+    radio.parentElement.after(answerDiv);
+  }
+
+  window.nextStep = nextStep;
+  window.submitLeadData = submitLeadData;
+  window.showFAQ = showFAQ;
+});
+</script>
+
 </body>
 <script>
   window.addEventListener('scroll', function() {
@@ -1210,6 +1264,60 @@ function showFAQ(radio) {
   answerDiv.innerText = answers[radio.value];
   radio.parentElement.after(answerDiv);
 }
+</script>
+
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  let chatVisible = false;
+  const chatIcon = document.getElementById("chatbot-icon");
+  const chatContainer = document.getElementById("chat-container");
+
+  chatIcon.onclick = () => {
+    chatVisible = !chatVisible;
+    chatContainer.style.display = chatVisible ? "block" : "none";
+  };
+
+  function nextStep(step) {
+    document.getElementById("step" + step).style.display = "block";
+  }
+
+  function submitLeadData() {
+    const name = document.getElementById("name").value;
+    const mobile = document.getElementById("contact").value;
+    const company = "EFG Chatbot";
+    const requirement = document.getElementById("requirement").value;
+    fetch("https://efg-chatbot-backend.onrender.com/send-whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, mobile, company, requirement })
+    })
+    .then(response => response.json())
+    .then(data => console.log("✅ Lead sent to WhatsApp:", data))
+    .catch(error => console.error("❌ Error sending to WhatsApp:", error));
+  }
+
+  function showFAQ(radio) {
+    const answers = {
+      Q1: "School fee financing lets you pay school or course fees in easy monthly EMIs instead of one-time lump sum.",
+      Q2: "Any parent or student with valid documents and regular income is eligible for financing.",
+      Q3: "You need basic KYC, income proof, and admission confirmation.",
+      Q4: "Some plans offer 0% interest EMIs in partnership with schools.",
+      Q5: "EMIs are calculated based on amount, interest rate, and tenure using reducing balance method.",
+      Q6: "Approval usually takes just a few minutes after verification.",
+      Q7: "Yes, you can prepay your EMI anytime with no extra charges.",
+      Q8: "Yes, we use bank-level encryption to protect all your data."
+    };
+    const answerDiv = document.createElement("div");
+    answerDiv.className = "message bot";
+    answerDiv.innerText = answers[radio.value];
+    radio.parentElement.after(answerDiv);
+  }
+
+  window.nextStep = nextStep;
+  window.submitLeadData = submitLeadData;
+  window.showFAQ = showFAQ;
+});
 </script>
 
 </body>
